@@ -5,16 +5,25 @@ import { Login } from './components/Login'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
-    const [user, setUser] = useState([])
-    const UserContext = createContext()
+    const [user, setUser] = useState(null)
 
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs))
+
+        // GET THE USER
+
+        const loggedInUser = JSON.parse(
+            localStorage.getItem('loggedBlogAppUser')
+        )
+        if (loggedInUser) {
+            setUser(loggedInUser)
+        }
     }, [])
 
-    useEffect(() => {
-        console.log(user)
-    }, [user])
+    const logout = () => {
+        localStorage.removeItem('loggedBlogAppUser')
+        setUser(null)
+    }
 
     const Blogs = ({ blogs }) => (
         <>
@@ -31,11 +40,21 @@ const App = () => {
     return (
         <div>
             {user ? (
-            <>
-                <h1>{user.name} logged in</h1>
-                <Blogs blogs={blogs} />
-            </>
-            ) : <Login setUser={setUser}/>}
+                <>
+                    <h1>
+                        {user.name} logged in{' '}
+                        <button
+                            type="button"
+                            onClick={() => logout()}>
+                            logout
+                        </button>
+                    </h1>
+
+                    <Blogs blogs={blogs} />
+                </>
+            ) : (
+                <Login setUser={setUser} />
+            )}
         </div>
     )
 }

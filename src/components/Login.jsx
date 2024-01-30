@@ -5,6 +5,10 @@ export const Login = ({ setUser }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
+    const storeInLocalStorage = (name, value) => {
+        window.localStorage.setItem(name, value)
+    }
+
     const handleLogin = async (event) => {
         event.preventDefault()
 
@@ -15,6 +19,7 @@ export const Login = ({ setUser }) => {
                 password,
             })
 
+            storeInLocalStorage('loggedBlogAppUser', JSON.stringify(response))
             setUser(response)
             setUsername('')
             setPassword('')

@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import loginService from '../services/login'
 
-export const Login = ({ setUser }) => {
+export const Login = ({ setUser, setToken }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
@@ -19,6 +19,7 @@ export const Login = ({ setUser }) => {
                 password,
             })
 
+            setToken(response.token)
             storeInLocalStorage('loggedBlogAppUser', JSON.stringify(response))
             setUser(response)
             setUsername('')

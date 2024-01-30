@@ -16,6 +16,7 @@ const App = () => {
             localStorage.getItem('loggedBlogAppUser')
         )
         if (loggedInUser) {
+            blogService.setToken(loggedInUser.token)
             setUser(loggedInUser)
         }
     }, [])
@@ -37,6 +38,58 @@ const App = () => {
         </>
     )
 
+    const AddBlogForm = () => {
+        const [title, setTitle] = useState('')
+        const [author, setAuthor] = useState('')
+        const [url, setUrl] = useState('')
+
+        const handleSubmit = async () => {
+            event.preventDefault()
+
+            try {
+                const newBlog = await blogService.store({
+                    title,
+                    author,
+                    url
+                })
+
+                setBlogs(prevBlogs => [...prevBlogs, newBlog])                
+            } catch (err) {
+                console.log(err)
+            }
+        }
+
+        return (
+            <form onSubmit={handleSubmit}>
+                <div>
+                    <label htmlFor="title">Title</label>
+                    <input
+                        id="title"
+                        value={title}
+                        onChange={({target}) => setTitle(target.value) }
+                    />
+                </div>
+                <div>
+                    <label htmlFor="author">Author</label>
+                    <input
+                        id="author"
+                        value={author}
+                        onChange={({target}) => setAuthor(target.value) }
+                    />
+                </div>
+                <div>
+                    <label htmlFor="url">Url</label>
+                    <input
+                        id="url"
+                        value={url}
+                        onChange={({target}) => setUrl(target.value) }
+                    />
+                </div>
+                <button>Create</button>
+            </form>
+        )
+    }
+
     return (
         <div>
             {user ? (
@@ -49,11 +102,11 @@ const App = () => {
                             logout
                         </button>
                     </h1>
-
+                    <AddBlogForm />
                     <Blogs blogs={blogs} />
                 </>
             ) : (
-                <Login setUser={setUser} />
+                <Login setUser={setUser} setToken={blogService.setToken}/>
             )}
         </div>
     )

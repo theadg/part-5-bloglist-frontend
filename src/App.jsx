@@ -2,16 +2,28 @@ import { useState, useEffect, createContext } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import { Login } from './components/Login'
+import { Message } from './components/Message'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
+    const [message, setMessage] = useState(null)
+    const [isSuccess, setIsSuccess] = useState(null)
+
+    const handleSetMessage = (message, isReqSuccess = true) => {
+        setMessage(message)
+        setIsSuccess(isReqSuccess)
+
+        setTimeout(() => {
+            setMessage(null)
+            setIsSuccess(null)
+        }, 3000)
+    } 
 
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs))
 
         // GET THE USER
-
         const loggedInUser = JSON.parse(
             localStorage.getItem('loggedBlogAppUser')
         )
@@ -53,7 +65,8 @@ const App = () => {
                     url
                 })
 
-                setBlogs(prevBlogs => [...prevBlogs, newBlog])                
+                setBlogs(prevBlogs => [...prevBlogs, newBlog])  
+                handleSetMessage(`a new blog ${newBlog.title} by ${newBlog.author} was added`, true)              
             } catch (err) {
                 console.log(err)
             }
@@ -92,6 +105,7 @@ const App = () => {
 
     return (
         <div>
+            {message && <Message message={message} isSuccess={isSuccess}/>}
             {user ? (
                 <>
                     <h1>
@@ -106,7 +120,11 @@ const App = () => {
                     <Blogs blogs={blogs} />
                 </>
             ) : (
-                <Login setUser={setUser} setToken={blogService.setToken}/>
+                <Login 
+                    setUser={setUser} 
+                    setToken={blogService.setToken}
+                    handleSetMessage={handleSetMessage}
+                />
             )}
         </div>
     )

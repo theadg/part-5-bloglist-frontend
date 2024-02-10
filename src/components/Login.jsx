@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import loginService from '../services/login'
 
-export const Login = ({ setUser, setToken }) => {
+export const Login = ({ setUser, setToken, handleSetMessage }) => {
     const [username, setUsername] = useState('')
     const [password, setPassword] = useState('')
 
@@ -24,8 +24,10 @@ export const Login = ({ setUser, setToken }) => {
             setUser(response)
             setUsername('')
             setPassword('')
+            handleSetMessage(`User ${response.name} successfully logged in!`, true)
         } catch (error) {
-            console.log(error)
+            console.log(error.response.data)
+            handleSetMessage(error.response.data.error, false)
         }
     }
     return (

@@ -1,14 +1,18 @@
-import { useState, useEffect, createContext } from 'react'
+import { useState, useEffect, createContext, useRef } from 'react'
 import Blog from './components/Blog'
 import blogService from './services/blogs'
 import { Login } from './components/Login'
 import { Message } from './components/Message'
+import Toggleable from './components/Toggleable'
+import BlogForm from './components/BlogForm'
 
 const App = () => {
     const [blogs, setBlogs] = useState([])
     const [user, setUser] = useState(null)
     const [message, setMessage] = useState(null)
     const [isSuccess, setIsSuccess] = useState(null)
+
+    const addBlogFormRef = useRef()
 
     const handleSetMessage = (message, isReqSuccess = true) => {
         setMessage(message)
@@ -18,7 +22,7 @@ const App = () => {
             setMessage(null)
             setIsSuccess(null)
         }, 3000)
-    } 
+    }
 
     useEffect(() => {
         blogService.getAll().then((blogs) => setBlogs(blogs))
@@ -45,67 +49,71 @@ const App = () => {
                 <Blog
                     key={blog.id}
                     blog={blog}
+                    likeBlog={likeBlog}
+                    deleteBlog={deleteBlog}
+                    user={user}
                 />
             ))}
         </>
     )
 
-    const AddBlogForm = () => {
-        const [title, setTitle] = useState('')
-        const [author, setAuthor] = useState('')
-        const [url, setUrl] = useState('')
-
-        const handleSubmit = async () => {
-            event.preventDefault()
-
-            try {
-                const newBlog = await blogService.store({
-                    title,
-                    author,
-                    url
-                })
-
-                setBlogs(prevBlogs => [...prevBlogs, newBlog])  
-                handleSetMessage(`a new blog ${newBlog.title} by ${newBlog.author} was added`, true)              
-            } catch (err) {
-                console.log(err)
-            }
+    const addBlog = async (blogObject) => {
+        try {
+            addBlogFormRef.current.toggleVisibility()
+            const newBlog = await blogService.store(blogObject)
+            setBlogs((prevBlogs) => [...prevBlogs, newBlog])
+            handleSetMessage(
+                `a new blog ${newBlog.title} by ${newBlog.author} was added`,
+                true
+            )
+        } catch (err) {
+            console.log(err)
+            handleSetMessage(`An Error has occurred: ${err} `, false)
         }
+    }
 
-        return (
-            <form onSubmit={handleSubmit}>
-                <div>
-                    <label htmlFor="title">Title</label>
-                    <input
-                        id="title"
-                        value={title}
-                        onChange={({target}) => setTitle(target.value) }
-                    />
-                </div>
-                <div>
-                    <label htmlFor="author">Author</label>
-                    <input
-                        id="author"
-                        value={author}
-                        onChange={({target}) => setAuthor(target.value) }
-                    />
-                </div>
-                <div>
-                    <label htmlFor="url">Url</label>
-                    <input
-                        id="url"
-                        value={url}
-                        onChange={({target}) => setUrl(target.value) }
-                    />
-                </div>
-                <button>Create</button>
-            </form>
-        )
+    const likeBlog = async (blogObject) => {
+        try {
+            blogObject.likes += 1
+
+            const likedBlog = await blogService.update(blogObject)
+
+            setBlogs((prevBlogs) => {
+                const updatedBlogs = prevBlogs.map((blog) =>
+                    blog.id === blogObject.id ? likedBlog : blog
+                )
+                return [...updatedBlogs]
+            })
+        } catch (err) {
+            console.log(err)
+        }
+    }
+
+    const deleteBlog = async (blogObject) => {
+        try {
+            if (window.confirm('Delete Blog')){
+                const deletedBlog = await blogService.deleteBlog(blogObject)
+
+                setBlogs((prevBlogs) => {
+                    const updatedBlogs = prevBlogs.filter(
+                        (blog) => blog.id !== deletedBlog.id
+                    )
+                    return [...updatedBlogs]
+                })
+            }
+        } catch (err) {
+            console.log(err)
+        }
     }
 
     return (
         <div>
-            {message && <Message message={message} isSuccess={isSuccess}/>}
+            {message && (
+                <Message
+                    message={message}
+                    isSuccess={isSuccess}
+                />
+            )}
             {user ? (
                 <>
                     <h1>
@@ -116,15 +124,21 @@ const App = () => {
                             logout
                         </button>
                     </h1>
-                    <AddBlogForm />
+                    <Toggleable
+                        buttonLabel={'Add Blog'}
+                        ref={addBlogFormRef}>
+                        <BlogForm createBlog={addBlog} />
+                    </Toggleable>
                     <Blogs blogs={blogs} />
                 </>
             ) : (
-                <Login 
-                    setUser={setUser} 
-                    setToken={blogService.setToken}
-                    handleSetMessage={handleSetMessage}
-                />
+                <Toggleable buttonLabel={'Login'}>
+                    <Login
+                        setUser={setUser}
+                        setToken={blogService.setToken}
+                        handleSetMessage={handleSetMessage}
+                    />
+                </Toggleable>
             )}
         </div>
     )

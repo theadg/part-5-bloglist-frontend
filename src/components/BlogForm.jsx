@@ -47,6 +47,7 @@ const BlogForm = ({ createBlog }) => {
             <div>
                 <label htmlFor="title">Title</label>
                 <input
+                    data-testid="titleTextbox"
                     id="title"
                     value={title}
                     onChange={({ target }) => setTitle(target.value)}
@@ -55,6 +56,7 @@ const BlogForm = ({ createBlog }) => {
             <div>
                 <label htmlFor="author">Author</label>
                 <input
+                    data-testid="authorTextbox"
                     id="author"
                     value={author}
                     onChange={({ target }) => setAuthor(target.value)}
@@ -63,12 +65,13 @@ const BlogForm = ({ createBlog }) => {
             <div>
                 <label htmlFor="url">Url</label>
                 <input
+                    data-testid="urlTextbox"
                     id="url"
                     value={url}
                     onChange={({ target }) => setUrl(target.value)}
                 />
             </div>
-            <button>Create</button>
+            <button data-testid="submitBtn">Create</button>
         </form>
     )
 }

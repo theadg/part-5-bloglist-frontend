@@ -46,7 +46,7 @@ test('shows url and likes on click', async () => {
     expect(likes).toHaveTextContent(blog.likes)
 })
 
-test.only('like button is clicked twice and like fn is called twice', async () => {
+test('like button is clicked twice and like fn is called twice', async () => {
     const blog = {
         title: 'sample',
         user: { name: 'badg' },

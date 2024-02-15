@@ -3,6 +3,7 @@ import { render, screen } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 import '@testing-library/jest-dom'
 import Blog from './Blog'
+import renderer from 'react-test-renderer'
 
 test('renders content', () => {
     const blog = {
@@ -23,6 +24,19 @@ test('renders content', () => {
     expect(author).toHaveTextContent(blog.user.name)
     expect(url).toBeNull()
     expect(likes).toBeNull()
+})
+
+test('renders content (snapshot)', () => {
+    const blog = {
+        title: 'sample',
+        user: { name: 'badg' },
+        url: 'hello.com',
+        likes: 0,
+    }
+
+    const tree = renderer.create(<Blog blog={blog} />).toJSON()
+
+    expect(tree).toMatchSnapshot()
 })
 
 test('shows url and likes on click', async () => {

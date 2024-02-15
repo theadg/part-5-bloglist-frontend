@@ -1,0 +1,35 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`renders content (snapshot) 1`] = `
+<div
+  style={
+    {
+      "border": "solid",
+      "borderWidth": 1,
+      "marginBottom": "1rem",
+      "paddingLeft": 2,
+      "paddingTop": 10,
+    }
+  }
+>
+  <div
+    data-testid="blogTitle"
+  >
+    sample
+  </div>
+   by
+  <div
+    data-testid="blogAuthor"
+  >
+    badg
+  </div>
+  <button
+    data-testid="showButton"
+    onClick={[Function]}
+    type="button"
+  >
+    View
+  </button>
+  <br />
+</div>
+`;

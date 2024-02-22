@@ -37,6 +37,7 @@ export const Login = ({ setUser, setToken, handleSetMessage }) => {
                 <div className="">
                     <label htmlFor="username">Username</label>
                     <input
+                        id="username"
                         type="text"
                         name="username"
                         onChange={({ target }) => setUsername(target.value)}
@@ -45,13 +46,14 @@ export const Login = ({ setUser, setToken, handleSetMessage }) => {
                 <div className="">
                     <label htmlFor="password">Password</label>
                     <input
+                        id="password"
                         type="password"
                         name="password"
                         onChange={({ target }) => setPassword(target.value)}
                     />
                 </div>
 
-                <button>Login</button>
+                <button id="login-button">Login</button>
             </form>
         </>
     )

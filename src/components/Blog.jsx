@@ -12,7 +12,7 @@ const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
     }
 
     return (
-        <div style={blogStyle}>
+        <div className="blog-item" style={blogStyle}>
             <div data-testid="blogTitle">{blog.title}</div> by
             <div data-testid="blogAuthor">{blog.user?.name ?? 'No Author'}</div>
             <button
@@ -37,6 +37,7 @@ const Blog = ({ blog, likeBlog, deleteBlog, user }) => {
                     {blog?.user?.name === user?.name && (
                         <button
                             type="button"
+                            data-testid="deleteBtn"
                             onClick={() => deleteBlog(blog)}>
                             delete
                         </button>

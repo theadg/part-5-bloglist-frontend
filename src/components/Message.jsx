@@ -13,5 +13,5 @@ export const Message = ({ message, isSuccess }) => {
         fontSize: '2rem'
     }
 
-    return <div style={styles}>{message}</div>
+    return <div className="message" style={styles}>{message}</div>
 }
